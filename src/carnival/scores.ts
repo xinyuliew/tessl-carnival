@@ -10,6 +10,18 @@ type ScoreStorage = Pick<Storage, 'getItem' | 'setItem'>;
 const STORAGE_KEY = 'tessl-carnival:scores';
 const MAX_ENTRIES_PER_GAME = 50;
 
+function isScoreEntry(value: unknown): value is ScoreEntry {
+  if (typeof value !== 'object' || value === null) return false;
+  const entry = value as Record<string, unknown>;
+  return (
+    typeof entry.gameId === 'string' &&
+    typeof entry.score === 'number' &&
+    Number.isFinite(entry.score) &&
+    typeof entry.at === 'number' &&
+    Number.isFinite(entry.at)
+  );
+}
+
 function memoryStorage(): ScoreStorage {
   const memory = new Map<string, string>();
   return {
@@ -24,7 +36,7 @@ export function createScoreBoard(storage: ScoreStorage, now: () => number = Date
   function load(): ScoreEntry[] {
     try {
       const parsed: unknown = JSON.parse(store.getItem(STORAGE_KEY) ?? '[]');
-      return Array.isArray(parsed) ? (parsed as ScoreEntry[]) : [];
+      return Array.isArray(parsed) ? parsed.filter(isScoreEntry) : [];
     } catch {
       return [];
     }

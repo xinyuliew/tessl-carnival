@@ -48,6 +48,26 @@ describe('score board', () => {
     expect(board.best('water-cannon')).toBe(5);
   });
 
+  it('ignores malformed entries in storage', () => {
+    const storage = memoryStorage();
+    storage.setItem(
+      'tessl-carnival:scores',
+      JSON.stringify([
+        null,
+        42,
+        'water-cannon',
+        { gameId: 'water-cannon' },
+        { gameId: 'water-cannon', score: '999', at: 1 },
+        { gameId: 'water-cannon', score: 30, at: 2 },
+      ]),
+    );
+    const board = createScoreBoard(storage);
+    expect(board.top('water-cannon', 10).map((e) => e.score)).toEqual([30]);
+    expect(board.best('water-cannon')).toBe(30);
+    expect(() => board.record('water-cannon', 60)).not.toThrow();
+    expect(board.top('water-cannon', 10).map((e) => e.score)).toEqual([60, 30]);
+  });
+
   it('keeps working when storage refuses a write', () => {
     const storage = memoryStorage();
     storage.setItem(
