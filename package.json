@@ -1,8 +1,8 @@
 {
-  "name": "tessl-carnival",
+  "name": "carnival-arcade",
   "private": true,
   "version": "0.1.0",
-  "description": "A small browser carnival. The starter repo for the 'Build your own software factory with context' workshop.",
+  "description": "Carnival Arcade: a small browser carnival with a walkable midway and a booth for every game.",
   "license": "MIT",
   "type": "module",
   "engines": {

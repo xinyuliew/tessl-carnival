@@ -1,20 +1,12 @@
 {
-  "name": "Tessl Carnival",
+  "name": "Carnival Arcade",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
-  "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
-  },
-  "postCreateCommand": "npm ci && ((curl -fsSL --connect-timeout 15 --max-time 120 -o /tmp/install-tessl.sh https://get.tessl.io && sh /tmp/install-tessl.sh) || echo 'Installing the Tessl CLI failed: see Before you start in workshop/agent.md')",
+  "postCreateCommand": "npm ci",
   "forwardPorts": [5173],
   "portsAttributes": {
     "5173": {
-      "label": "Carnival",
+      "label": "Carnival Arcade",
       "onAutoForward": "openBrowser"
-    }
-  },
-  "customizations": {
-    "codespaces": {
-      "openFiles": ["WORKSHOP.md"]
     }
   }
 }

@@ -2,19 +2,19 @@
 
 ## Report a vulnerability
 
-Email **security@tessl.io**. Please don't post security problems in Discussions
-or anywhere else in public.
+Please don't post security problems in public issues or pull requests.
 
-Say what you found, how to reproduce it, and what someone could do with it. We'll
-reply to let you know we've got it, and keep you posted while we fix it.
+If private vulnerability reporting is turned on for this repository, report the
+problem from the **Security** tab of
+[the repository](https://github.com/xinyuliew/tessl-carnival/security), using
+**Report a vulnerability**. If it isn't, open an issue that asks the maintainer
+for a private way to reach them, without any details of the problem.
+
+Say what you found, how to reproduce it, and what someone could do with it.
 
 ## What's in scope
 
-- This repository: the carnival, its workflows, and the skills in `skills/` and
-  `tessl-factory/skills/`.
-- Tessl itself, including the Tessl CLI, the Tessl GitHub App and Tessl Review.
-  Report those to the same address.
+This repository: the carnival, its workflows, and the skills in `skills/`.
 
-A problem in your own fork, such as a secret you committed by mistake, isn't a
-vulnerability in the carnival. Revoke the secret straight away, then remove it
-from your fork.
+A secret committed by mistake should be revoked straight away, then removed from
+the repository.
