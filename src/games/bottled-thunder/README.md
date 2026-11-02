@@ -8,11 +8,14 @@ living sparks into the bottles that match their symbols.
 - Click **Start** on the instructions screen to begin a 45-second round.
 - The lantern follows your pointer. Hold the mouse button, or keep your finger
   down, to switch on its pull: sparks inside the dashed circle bend towards it.
+  Only the pointer that switched the lantern on can steer or release it; a
+  second finger on the glass does nothing until the first lets go.
 - Let go to release the sparks. They keep their speed, coast on and drop
   towards the bottles.
 - Each spark carries a symbol: a circle, a triangle or a diamond. Each bottle
   along the bottom has one of those symbols. Steer every spark into the bottle
-  with its symbol. A spark that hits the shelf between bottles bounces off.
+  with its symbol. What counts is where the spark crosses the shelf: inside a
+  bottle's mouth it drops in, anywhere else on the shelf it bounces off.
 - Sparks you have not touched drift around under the clouds. Sparks appear one
   at a time, a little faster as the round goes on, and there are never more
   than 7 at once.
@@ -35,7 +38,8 @@ Your final score is saved to the carnival's score board once, when the round end
 ## Files
 
 - `game.ts`: the game logic (`createState`, `startRound`, `pressLantern`,
-  `moveLantern`, `releaseLantern`, `spawnSpark`, `step`, `capture`,
+  `moveLantern`, `releaseLantern`, `pointerDown`, `pointerMove`, `pointerUp`,
+  `spawnSpark`, `step`, `capture`,
   `multiplierFor`, `claimFinalScore`) and the `bottledThunder` entry, the
   default export the midway finds.
 - `game.test.ts`: tests for the game logic.

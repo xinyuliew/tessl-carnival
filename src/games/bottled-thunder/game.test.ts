@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import bottledThunderDefault, {
   ATTRACT_RADIUS,
   BUTTON,
+  CABINET,
   MAX_SPARKS,
   MAX_SUBSTEP,
+  MOUTH_HALF_WIDTH,
   MOUTH_Y,
   ROUND_SECONDS,
   SPARK_LIFETIME,
@@ -15,6 +17,9 @@ import bottledThunderDefault, {
   isOnButton,
   moveLantern,
   multiplierFor,
+  pointerDown,
+  pointerMove,
+  pointerUp,
   pressLantern,
   releaseLantern,
   spawnSpark,
@@ -169,6 +174,44 @@ describe('bottled thunder', () => {
     expect(state.sparks[0].y).toBeLessThan(MOUTH_Y);
   });
 
+  it('bottles a spark that crosses inside a mouth edge, even if it ends the step outside', () => {
+    const state = playing();
+    const target = bottle(state, 'circle');
+    const edge = target.x + MOUTH_HALF_WIDTH;
+    // Crosses the shelf at about edge - 0.8, ends the substep at edge + 1.
+    state.sparks = [
+      spark({ symbol: 'circle', x: edge - 1, y: MOUTH_Y - 0.2, vx: 240, vy: 240, guided: true }),
+    ];
+    step(state, MAX_SUBSTEP);
+    expect(state.sparks).toHaveLength(0);
+    expect(state.score).toBe(10);
+  });
+
+  it('bounces a spark that crosses outside a mouth edge, even if it ends the step inside', () => {
+    const state = playing();
+    const target = bottle(state, 'circle');
+    const edge = target.x + MOUTH_HALF_WIDTH;
+    // Crosses the shelf at about edge + 0.8, ends the substep at edge - 1.
+    state.sparks = [
+      spark({ symbol: 'circle', x: edge + 1, y: MOUTH_Y - 0.2, vx: -240, vy: 240, guided: true }),
+    ];
+    step(state, MAX_SUBSTEP);
+    expect(state.sparks).toHaveLength(1);
+    expect(state.sparks[0].y).toBeLessThan(MOUTH_Y);
+    expect(state.score).toBe(0);
+  });
+
+  it('bounces a spark that crosses the shelf at a wall', () => {
+    const state = playing();
+    state.sparks = [
+      spark({ x: CABINET.left + 13, y: MOUTH_Y - 0.2, vx: -380, vy: 100, guided: true }),
+    ];
+    step(state, MAX_SUBSTEP);
+    expect(state.sparks).toHaveLength(1);
+    expect(state.sparks[0].y).toBeLessThan(MOUTH_Y);
+    expect(state.sparks[0].vx).toBeGreaterThan(0);
+  });
+
   it('raises the multiplier every third capture in a row, up to 4x', () => {
     const state = playing();
     const target = bottle(state, 'circle');
@@ -250,6 +293,49 @@ describe('bottled thunder', () => {
     expect(claimFinalScore(state)).toBeUndefined();
     step(state, 1);
     expect(claimFinalScore(state)).toBeUndefined();
+  });
+
+  it('lets only the pointer holding the lantern move or release it', () => {
+    const state = playing();
+    expect(pointerDown(state, 1, 100, 100)).toBe(true);
+    // A second finger lands, moves and lifts while the first is still down.
+    expect(pointerDown(state, 2, 600, 300)).toBe(false);
+    pointerMove(state, 2, 650, 320);
+    expect(pointerUp(state, 2)).toBe(false);
+    expect(state.lantern).toMatchObject({ x: 100, y: 100, held: true, pointerId: 1 });
+    pointerMove(state, 1, 120, 140);
+    expect(state.lantern).toMatchObject({ x: 120, y: 140, held: true });
+    expect(pointerUp(state, 1)).toBe(true);
+    expect(state.lantern).toMatchObject({ held: false, pointerId: null });
+  });
+
+  it('hands the lantern to the next pointer once the first lets go', () => {
+    const state = playing();
+    pointerDown(state, 1, 100, 100);
+    pointerDown(state, 2, 600, 300);
+    pointerUp(state, 1);
+    // Any pointer hovers the lantern while nobody holds it.
+    pointerMove(state, 2, 610, 310);
+    expect(state.lantern).toMatchObject({ x: 610, y: 310, held: false });
+    expect(pointerDown(state, 2, 620, 320)).toBe(true);
+    expect(state.lantern).toMatchObject({ held: true, pointerId: 2 });
+  });
+
+  it('starts the round from a pointer on the start control without taking the lantern', () => {
+    const state = createState();
+    expect(pointerDown(state, 1, 10, 10)).toBe(false);
+    expect(state.phase).toBe('intro');
+    expect(pointerDown(state, 1, BUTTON.x + 5, BUTTON.y + 5)).toBe(false);
+    expect(state.phase).toBe('playing');
+    expect(state.lantern).toMatchObject({ held: false, pointerId: null });
+  });
+
+  it('lets go of the lantern when the round ends', () => {
+    const state = playing();
+    pointerDown(state, 3, 400, 200);
+    step(state, ROUND_SECONDS);
+    expect(state.lantern).toMatchObject({ held: false, pointerId: null });
+    expect(pointerUp(state, 3)).toBe(false);
   });
 
   it('replays as a fresh round', () => {

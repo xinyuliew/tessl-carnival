@@ -60,6 +60,8 @@ export interface Lantern {
   x: number;
   y: number;
   held: boolean;
+  /** The pointer holding the lantern, or null when nobody holds it. */
+  pointerId: number | null;
 }
 
 export interface BottledThunderState {
@@ -92,7 +94,7 @@ export function createState(): BottledThunderState {
     bottles: createBottles(),
     sparks: [],
     feedback: [],
-    lantern: { x: WIDTH / 2, y: 200, held: false },
+    lantern: { x: WIDTH / 2, y: 200, held: false, pointerId: null },
     score: 0,
     streak: 0,
     timeLeft: ROUND_SECONDS,
@@ -105,7 +107,10 @@ export function createState(): BottledThunderState {
 /** Starts a fresh round. The lantern starts switched off. */
 export function startRound(state: BottledThunderState): void {
   const fresh = createState();
-  Object.assign(state, fresh, { phase: 'playing', lantern: { ...state.lantern, held: false } });
+  Object.assign(state, fresh, {
+    phase: 'playing',
+    lantern: { ...state.lantern, held: false, pointerId: null },
+  });
 }
 
 /** The multiplier for the next correct capture, given the current streak. */
@@ -134,6 +139,53 @@ export function pressLantern(state: BottledThunderState, x: number, y: number): 
 /** Turns the pull off. Sparks keep their speed and coast. Releasing never costs points. */
 export function releaseLantern(state: BottledThunderState): void {
   state.lantern.held = false;
+  state.lantern.pointerId = null;
+}
+
+/**
+ * A pointer went down. Outside a round it only moves the lantern and, on the
+ * start control, starts the round. In a round it takes the lantern unless
+ * another pointer already holds it. Returns true when this pointer now holds
+ * the lantern, so it should be captured.
+ */
+export function pointerDown(
+  state: BottledThunderState,
+  pointerId: number,
+  x: number,
+  y: number,
+): boolean {
+  if (state.phase !== 'playing') {
+    moveLantern(state, x, y);
+    if (isOnButton(x, y)) startRound(state);
+    return false;
+  }
+  const owner = state.lantern.pointerId;
+  if (owner !== null && owner !== pointerId) return false;
+  pressLantern(state, x, y);
+  state.lantern.pointerId = pointerId;
+  return true;
+}
+
+/** A pointer moved. While the lantern is held, only its own pointer moves it. */
+export function pointerMove(
+  state: BottledThunderState,
+  pointerId: number,
+  x: number,
+  y: number,
+): void {
+  const owner = state.lantern.pointerId;
+  if (owner !== null && owner !== pointerId) return;
+  moveLantern(state, x, y);
+}
+
+/**
+ * A pointer went up, was cancelled or lost its capture. Only the pointer
+ * holding the lantern releases it. Returns true when it did.
+ */
+export function pointerUp(state: BottledThunderState, pointerId: number): boolean {
+  if (state.lantern.pointerId !== pointerId) return false;
+  releaseLantern(state);
+  return true;
 }
 
 /** Scales a pointer position on the page to the canvas's own coordinates. */
@@ -191,6 +243,11 @@ export function bottleAt(state: BottledThunderState, x: number): Bottle | undefi
   return state.bottles.find((bottle) => Math.abs(x - bottle.x) <= MOUTH_HALF_WIDTH);
 }
 
+/** Keeps an x position inside the cabinet walls, the same way a spark is kept there. */
+function insideWalls(x: number): number {
+  return Math.min(Math.max(x, CABINET.left + SPARK_RADIUS), CABINET.right - SPARK_RADIUS);
+}
+
 /** Moves one spark by a short `h` seconds. Returns false when the spark is gone. */
 function moveSpark(state: BottledThunderState, spark: Spark, h: number): boolean {
   spark.age += h;
@@ -223,9 +280,17 @@ function moveSpark(state: BottledThunderState, spark: Spark, h: number): boolean
     spark.vy *= MAX_SPEED / speed;
   }
 
+  const previousX = spark.x;
   const previousY = spark.y;
   spark.x += spark.vx * h;
   spark.y += spark.vy * h;
+
+  // Where the straight path crosses the shelf, inside the walls like the spark itself.
+  let shelfX: number | undefined;
+  if (spark.guided && previousY < MOUTH_Y && spark.y >= MOUTH_Y) {
+    const t = (MOUTH_Y - previousY) / (spark.y - previousY);
+    shelfX = insideWalls(previousX + (spark.x - previousX) * t);
+  }
 
   if (spark.x < CABINET.left + SPARK_RADIUS) {
     spark.x = CABINET.left + SPARK_RADIUS;
@@ -247,8 +312,8 @@ function moveSpark(state: BottledThunderState, spark: Spark, h: number): boolean
     return true;
   }
 
-  if (previousY < MOUTH_Y && spark.y >= MOUTH_Y) {
-    const bottle = bottleAt(state, spark.x);
+  if (shelfX !== undefined) {
+    const bottle = bottleAt(state, shelfX);
     if (bottle) {
       capture(state, spark, bottle);
       return false;
@@ -294,7 +359,7 @@ export function step(state: BottledThunderState, dt: number, random: Random = Ma
 
   if (state.timeLeft <= 0) {
     state.phase = 'over';
-    state.lantern.held = false;
+    releaseLantern(state);
   }
 }
 
@@ -576,24 +641,18 @@ export const bottledThunder: CarnivalGame = {
 
     const onMove = (event: PointerEvent) => {
       const { x, y } = pointFrom(event);
-      moveLantern(state, x, y);
+      pointerMove(state, event.pointerId, x, y);
     };
     const onDown = (event: PointerEvent) => {
       const { x, y } = pointFrom(event);
-      if (state.phase !== 'playing') {
-        // The click on Start or Play again only starts the round.
-        moveLantern(state, x, y);
-        if (isOnButton(x, y)) startRound(state);
-        return;
-      }
-      event.preventDefault();
-      pressLantern(state, x, y);
+      // The click on Start or Play again only starts the round.
+      if (state.phase === 'playing') event.preventDefault();
+      if (!pointerDown(state, event.pointerId, x, y)) return;
       capturedPointer = event.pointerId;
       canvas.setPointerCapture(event.pointerId);
     };
-    const onUp = () => {
-      releaseLantern(state);
-      releasePointer();
+    const onUp = (event: PointerEvent) => {
+      if (pointerUp(state, event.pointerId)) releasePointer();
     };
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerdown', onDown);
