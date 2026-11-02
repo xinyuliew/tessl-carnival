@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   FLIGHT_TIME,
+  LANDING_LIFETIME,
   NECK_RADIUS,
   RINGS_PER_ROUND,
   SWAY_AMPLITUDE,
@@ -97,6 +98,35 @@ describe('ring toss', () => {
     expect(state.score).toBe(0);
     step(state, FLIGHT_TIME / 2);
     expect(state.score).toBe(bottle.points);
+  });
+
+  it('ages landing feedback only from the moment the ring lands', () => {
+    const state = createState();
+    toss(state, 400, 200);
+    step(state, FLIGHT_TIME - 0.1);
+    expect(state.landings).toHaveLength(0);
+    step(state, 0.3);
+    expect(state.landings).toHaveLength(1);
+    expect(state.landings[0].age).toBeCloseTo(0.2);
+  });
+
+  it('keeps landing feedback for its full lifetime after a large step', () => {
+    const state = createState();
+    toss(state, 400, 200);
+    step(state, FLIGHT_TIME + 0.5);
+    expect(state.landings).toHaveLength(1);
+    expect(state.landings[0].age).toBeCloseTo(0.5);
+    step(state, LANDING_LIFETIME - 0.5 - 0.01);
+    expect(state.landings).toHaveLength(1);
+    step(state, 0.02);
+    expect(state.landings).toHaveLength(0);
+  });
+
+  it('drops landing feedback when a step reaches past its lifetime', () => {
+    const state = createState();
+    toss(state, 400, 200);
+    step(state, FLIGHT_TIME + LANDING_LIFETIME + 0.1);
+    expect(state.landings).toHaveLength(0);
   });
 
   it('sways the throw sideways over time', () => {

@@ -11,6 +11,8 @@ export const NECK_RADIUS = 14;
 export const SWAY_AMPLITUDE = 40;
 /** Radians per second of the sway. */
 export const SWAY_SPEED = 3;
+/** Seconds the points or a miss stay on screen after a ring lands. */
+export const LANDING_LIFETIME = 0.8;
 export const THROWER = { x: WIDTH / 2, y: HEIGHT - 40 } as const;
 const COLUMNS = 5;
 const COLUMN_SPACING = 110;
@@ -44,6 +46,7 @@ export interface Landing {
   y: number;
   /** The points this ring scored; 0 for a miss. */
   points: number;
+  /** Seconds since the ring landed. */
   age: number;
 }
 
@@ -107,6 +110,8 @@ export function toss(state: RingTossState, aimX: number, aimY: number): boolean 
 export function step(state: RingTossState, dt: number): void {
   state.time += dt;
 
+  for (const landing of state.landings) landing.age += dt;
+
   const ring = state.ring;
   if (ring) {
     ring.age += dt;
@@ -116,13 +121,14 @@ export function step(state: RingTossState, dt: number): void {
         bottle.rings += 1;
         state.score += bottle.points;
       }
-      state.landings.push({ x: ring.toX, y: ring.toY, points: bottle?.points ?? 0, age: 0 });
+      // Only the part of this step after the ring touched down counts.
+      const age = ring.age - FLIGHT_TIME;
+      state.landings.push({ x: ring.toX, y: ring.toY, points: bottle?.points ?? 0, age });
       state.ring = null;
     }
   }
 
-  for (const landing of state.landings) landing.age += dt;
-  state.landings = state.landings.filter((l) => l.age < 0.8);
+  state.landings = state.landings.filter((l) => l.age < LANDING_LIFETIME);
 
   if (state.rings === 0 && !state.ring) state.phase = 'over';
 }
@@ -167,7 +173,7 @@ function draw(ctx: CanvasRenderingContext2D, state: RingTossState, aim: { x: num
   }
 
   for (const landing of state.landings) {
-    ctx.globalAlpha = 1 - landing.age / 0.8;
+    ctx.globalAlpha = 1 - landing.age / LANDING_LIFETIME;
     ctx.fillStyle = landing.points > 0 ? colors.accent : colors.danger;
     ctx.font = canvasFont('body', 'bold');
     ctx.textAlign = 'center';
