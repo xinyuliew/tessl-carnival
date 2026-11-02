@@ -87,34 +87,50 @@ export function whack(state: WhackAMoleState, index: number): number {
   return POINTS_PER_MOLE;
 }
 
-/** Advances the game by `dt` seconds. */
+/** Slack for floating-point drift, so splitting a step never changes when things happen. */
+const EPSILON = 1e-9;
+
+/**
+ * Advances the game by `dt` seconds. A long step plays out in order, one event
+ * at a time, so it ends the same as the same time split into short steps.
+ */
 export function step(state: WhackAMoleState, dt: number, random: () => number = Math.random) {
-  if (state.phase !== 'playing') return;
-
-  for (const hole of state.holes) {
-    if (hole.mole === 'down') continue;
-    hole.timer -= dt;
-    if (hole.timer > 0) continue;
-    if (hole.mole === 'up') state.misses += 1;
-    hole.mole = 'down';
-    hole.timer = 0;
-  }
-
-  state.elapsed += dt;
-  if (state.elapsed >= ROUND_LENGTH) {
-    state.elapsed = ROUND_LENGTH;
+  let remaining = dt;
+  while (state.phase === 'playing' && remaining > 0) {
+    // Move to the next event: a mole dropping, a pop-up, the end of the round
+    // or the end of this step, whichever comes first.
+    let span = Math.min(remaining, state.nextPop, ROUND_LENGTH - state.elapsed);
     for (const hole of state.holes) {
+      if (hole.mole !== 'down') span = Math.min(span, hole.timer);
+    }
+    span = Math.max(span, 0);
+    remaining -= span;
+    state.elapsed += span;
+    state.nextPop -= span;
+
+    for (const hole of state.holes) {
+      if (hole.mole === 'down') continue;
+      hole.timer -= span;
+      if (hole.timer > EPSILON) continue;
+      if (hole.mole === 'up') state.misses += 1;
       hole.mole = 'down';
       hole.timer = 0;
     }
-    state.phase = 'over';
-    return;
-  }
 
-  state.nextPop -= dt;
-  while (state.nextPop <= 0) {
-    popUp(state, random);
-    state.nextPop += popInterval(state.elapsed);
+    if (state.elapsed >= ROUND_LENGTH - EPSILON) {
+      state.elapsed = ROUND_LENGTH;
+      for (const hole of state.holes) {
+        hole.mole = 'down';
+        hole.timer = 0;
+      }
+      state.phase = 'over';
+      return;
+    }
+
+    while (state.nextPop <= EPSILON) {
+      popUp(state, random);
+      state.nextPop += popInterval(state.elapsed);
+    }
   }
 }
 

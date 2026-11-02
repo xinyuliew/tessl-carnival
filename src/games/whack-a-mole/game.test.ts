@@ -19,6 +19,39 @@ const first = () => 0;
 const upCount = (state: ReturnType<typeof createState>) =>
   state.holes.filter((hole) => hole.mole !== 'down').length;
 
+/** A seeded random source, so two runs pop moles from the same holes. */
+const seeded = (seed: number) => () => {
+  seed = (seed * 1664525 + 1013904223) % 2 ** 32;
+  return seed / 2 ** 32;
+};
+
+/** Runs `seconds` of play in steps of `size`, from a fresh round or `from` seconds in. */
+const play = (seconds: number, size: number, from = 0) => {
+  const state = createState();
+  state.elapsed = from;
+  const random = seeded(7);
+  let left = seconds;
+  while (left > 1e-12) {
+    const dt = Math.min(size, left);
+    step(state, dt, random);
+    left -= dt;
+  }
+  return state;
+};
+
+const expectSameGame = (
+  actual: ReturnType<typeof createState>,
+  expected: ReturnType<typeof createState>,
+) => {
+  expect(actual.phase).toBe(expected.phase);
+  expect(actual.misses).toBe(expected.misses);
+  expect(actual.score).toBe(expected.score);
+  expect(actual.elapsed).toBeCloseTo(expected.elapsed, 9);
+  expect(actual.nextPop).toBeCloseTo(expected.nextPop, 9);
+  expect(actual.holes.map((hole) => hole.mole)).toEqual(expected.holes.map((hole) => hole.mole));
+  actual.holes.forEach((hole, i) => expect(hole.timer).toBeCloseTo(expected.holes[i].timer, 9));
+};
+
 describe('whack-a-mole', () => {
   it('starts with every mole down, no score and the full clock', () => {
     const state = createState();
@@ -132,5 +165,34 @@ describe('whack-a-mole', () => {
     expect(state.score).toBe(30);
     expect(state.elapsed).toBe(ROUND_LENGTH);
     expect(upCount(state)).toBe(0);
+  });
+
+  it('plays out a long step in order, so overdue moles still drop and count as misses', () => {
+    const state = createState();
+    step(state, 2, first);
+    // The first mole popped at 0.5s and dropped at 1.5s. The second popped
+    // just before 1.5s and is still up.
+    expect(state.misses).toBe(1);
+    expect(upCount(state)).toBe(1);
+    const secondPop = 0.5 + popInterval(0.5);
+    expect(state.holes.find((hole) => hole.mole === 'up')?.timer).toBeCloseTo(
+      UP_TIME - (2 - secondPop),
+    );
+  });
+
+  it('ends a long step the same as the same time in short steps', () => {
+    for (const seconds of [2, 5, 12.3]) {
+      expectSameGame(play(seconds, seconds), play(seconds, 1 / 64));
+      expectSameGame(play(seconds, 0.7), play(seconds, 1 / 64));
+    }
+  });
+
+  it('counts misses up to the end of the round when a long step runs past it', () => {
+    const long = play(5, 5, ROUND_LENGTH - 3);
+    const short = play(5, 1 / 64, ROUND_LENGTH - 3);
+    expect(long.phase).toBe('over');
+    expect(long.elapsed).toBe(ROUND_LENGTH);
+    expect(long.misses).toBeGreaterThan(0);
+    expectSameGame(long, short);
   });
 });
