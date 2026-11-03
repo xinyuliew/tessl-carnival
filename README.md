@@ -86,9 +86,19 @@ pull request and every push to `main`.
 
 `.github/workflows/pages.yml` deploys the built site to GitHub Pages on every
 push to `main`, once Pages is switched on: in **Settings → Pages**, set
-**Source** to **GitHub Actions**. While Pages is off or unavailable for the
-account, the workflow skips the deploy with a notice instead of failing. The
-site isn't published at the moment, so run it locally to play.
+**Source** to **GitHub Actions**. Before deploying, the workflow asks the
+GitHub Pages API whether Pages is on:
+
+- **200:** Pages is on, so it builds and deploys the site.
+- **404:** Pages is off, so it skips the deploy with a notice instead of
+  failing.
+- **Any other status:** it fails with an error, because it can't tell whether
+  Pages is on. Re-run it once the API answers normally.
+
+If GitHub Actions can't run jobs on the account at all, for example while it
+is locked over billing, neither workflow starts, so nothing is checked or
+deployed until that is sorted out. The site isn't published at the moment, so
+run it locally to play (see [Run it](#run-it)).
 
 The build uses relative asset paths (`vite.config.ts`), so it works from any
 GitHub Pages URL.

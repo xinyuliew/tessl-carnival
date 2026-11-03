@@ -29,8 +29,7 @@ Keep each issue to one change, and say how you'll know it's done.
 5. In the pull request, say what changed and how to try it, and end with
    `Closes #<issue number>` when it finishes an issue.
 
-Don't add dependencies without a good reason: `npm ci` is the whole setup and
-should stay quick.
+Don't add dependencies: `npm ci` is the whole setup and should stay quick.
 
 ## Security
 
