@@ -15,16 +15,15 @@ Source: [github.com/xinyuliew/tessl-carnival](https://github.com/xinyuliew/tessl
 
 ## Booths we've built
 
-| Booth               | How it plays                                                                                            | Round and scoring                                                 | Implementation                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Water Cannon**    | Aim with the mouse and fire water at moving targets on three rails.                                     | 15 shots; faster targets score 10, 20, or 30 points.              | [Included in main](src/games/water-cannon/README.md)          |
-| **Ring Toss**       | Time your gently swaying aim and throw rings onto bottle necks.                                         | 8 rings; back-row bottles score more, from 10 to 30 points.       | [PR #6](https://github.com/xinyuliew/tessl-carnival/pull/6)   |
-| **Whack-a-Mole**    | Click moles as they appear in nine holes, with less time between appearances as the round progresses.   | 30 seconds; each successful whack earns 10 points.                | [PR #8](https://github.com/xinyuliew/tessl-carnival/pull/8)   |
-| **Bottled Thunder** | Hold a magnetic lantern to attract living sparks, then release them into bottles with matching symbols. | 45 seconds; matching captures build a streak multiplier up to 4x. | [PR #10](https://github.com/xinyuliew/tessl-carnival/pull/10) |
+| Booth               | How it plays                                                                                            | Round and scoring                                                 | Implementation                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Water Cannon**    | Aim with the mouse and fire water at moving targets on three rails.                                     | 15 shots; faster targets score 10, 20, or 30 points.              | [Controls and scoring](src/games/water-cannon/README.md)    |
+| **Ring Toss**       | Time your gently swaying aim and throw rings onto bottle necks.                                         | 8 rings; back-row bottles score more, from 10 to 30 points.       | [Controls and scoring](src/games/ring-toss/README.md)       |
+| **Whack-a-Mole**    | Click moles as they appear in nine holes, with less time between appearances as the round progresses.   | 30 seconds; each successful whack earns 10 points.                | [Controls and scoring](src/games/whack-a-mole/README.md)    |
+| **Bottled Thunder** | Hold a magnetic lantern to attract living sparks, then release them into bottles with matching symbols. | 45 seconds; matching captures build a streak multiplier up to 4x. | [Controls and scoring](src/games/bottled-thunder/README.md) |
 
-All four booths are available together in the current local development preview.
-The additional booths are being integrated through the linked pull requests;
-a fresh clone of `main` includes Water Cannon until those PRs are merged.
+All four booths are included in this project. Each game has its own controls,
+scoring rules, tests, and README.
 
 ## Run it
 
