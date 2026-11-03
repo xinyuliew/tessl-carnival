@@ -2,15 +2,29 @@
 
 [![MIT license](https://img.shields.io/badge/license-MIT-b9a9d9)](LICENSE)
 
-Carnival Arcade is a small browser carnival. You walk around a sunny midway of
-tents, rides and game booths, and step up to a booth to play its game. Each game
-keeps its best scores in your browser, and empty booths say "coming soon" until
-a game fills them.
+Carnival Arcade is a local browser arcade with a walkable carnival midway.
+Explore the tents and rides, step up to a booth, and play for a high score.
+Scores stay in your browser on your computer. Empty booths say "coming soon"
+until a new game fills them.
 
-It ships with one game, the **water cannon**. Each game lives in its own folder,
-and the midway finds it there, so adding a game touches no shared file.
+Run the app on your computer with Node.js and open it in your browser. Hosting,
+GitHub Actions, and payment details are not needed to play locally. GitHub keeps
+the source code and the history of the project; online hosting can be added later.
 
 Source: [github.com/xinyuliew/tessl-carnival](https://github.com/xinyuliew/tessl-carnival)
+
+## Booths we've built
+
+| Booth               | How it plays                                                                                            | Round and scoring                                                 | Implementation                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Water Cannon**    | Aim with the mouse and fire water at moving targets on three rails.                                     | 15 shots; faster targets score 10, 20, or 30 points.              | [Included in main](src/games/water-cannon/README.md)          |
+| **Ring Toss**       | Time your gently swaying aim and throw rings onto bottle necks.                                         | 8 rings; back-row bottles score more, from 10 to 30 points.       | [PR #6](https://github.com/xinyuliew/tessl-carnival/pull/6)   |
+| **Whack-a-Mole**    | Click moles as they appear in nine holes, with less time between appearances as the round progresses.   | 30 seconds; each successful whack earns 10 points.                | [PR #8](https://github.com/xinyuliew/tessl-carnival/pull/8)   |
+| **Bottled Thunder** | Hold a magnetic lantern to attract living sparks, then release them into bottles with matching symbols. | 45 seconds; matching captures build a streak multiplier up to 4x. | [PR #10](https://github.com/xinyuliew/tessl-carnival/pull/10) |
+
+All four booths are available together in the current local development preview.
+The additional booths are being integrated through the linked pull requests;
+a fresh clone of `main` includes Water Cannon until those PRs are merged.
 
 ## Run it
 
@@ -79,29 +93,19 @@ framework and no native dependencies, so `npm ci` is the whole setup.
 [`skills/add-carnival-game/SKILL.md`](skills/add-carnival-game/SKILL.md) has
 the details.
 
-## Deployment
+## Local use and optional hosting
 
-`.github/workflows/ci.yml` runs `npm run check` and `npm run build` on every
-pull request and every push to `main`.
+Local use is the project's primary setup. After installing dependencies, start
+it with `npm run dev` and keep that terminal running while you play. Scores are
+stored per browser and site address; using another browser or clearing site
+data does not carry scores across.
 
-`.github/workflows/pages.yml` deploys the built site to GitHub Pages on every
-push to `main`, once Pages is switched on: in **Settings → Pages**, set
-**Source** to **GitHub Actions**. Before deploying, the workflow asks the
-GitHub Pages API whether Pages is on:
+To try a production build locally, run `npm run build`, then `npm run preview`
+and open the address printed in the terminal.
 
-- **200:** Pages is on, so it builds and deploys the site.
-- **404:** Pages is off, so it skips the deploy with a notice instead of
-  failing.
-- **Any other status:** it fails with an error, because it can't tell whether
-  Pages is on. Re-run it once the API answers normally.
-
-If GitHub Actions can't run jobs on the account at all, for example while it
-is locked over billing, neither workflow starts, so nothing is checked or
-deployed until that is sorted out. The site isn't published at the moment, so
-run it locally to play (see [Run it](#run-it)).
-
-The build uses relative asset paths (`vite.config.ts`), so it works from any
-GitHub Pages URL.
+The CI and GitHub Pages workflows remain available for future online releases.
+They are separate from local play: an unavailable GitHub Actions service does
+not stop the app running on your computer.
 
 ## Contributing
 
