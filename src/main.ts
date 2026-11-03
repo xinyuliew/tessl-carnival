@@ -25,12 +25,9 @@ function renderMidway() {
         <kbd>E</kbd> to play.
       </p>
       <p class="midway-credit">
-        Built with
-        <a href="https://tessl.io/?utm_source=carnival&amp;utm_medium=midway-credit&amp;utm_campaign=tessl-carnival" target="_blank" rel="noopener">Tessl</a>
-        at
-        <a href="https://tessl.io/devcon?utm_source=carnival&amp;utm_medium=midway-credit&amp;utm_campaign=tessl-carnival" target="_blank" rel="noopener">AI DevCon NYC</a>
+        A browser carnival, one booth per game
         <span class="midway-links">
-          <a href="${REPO_URL}" target="_blank" rel="noopener">Build your own</a>
+          <a href="${REPO_URL}" target="_blank" rel="noopener">Source on GitHub</a>
           <span class="midway-share" hidden>
             · Share on
             <a class="share-x" target="_blank" rel="noopener">X</a>

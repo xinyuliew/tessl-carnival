@@ -1,25 +1,8 @@
-# Tessl Carnival: agent guide
+# Carnival Arcade: agent guide
 
-A small browser carnival. The midway (`index.html`, `src/main.ts`,
-`src/midway/`) is a walkable isometric map with a booth for every game; each
-game lives in its own folder under `src/games/`.
-
-## The workshop
-
-If the person asks about the workshop, start at `WORKSHOP.md`, which offers two
-paths. For the agent path, follow `workshop/agent.md` step by step, as its
-section for agents says: one step at a time, checking each **Done when** with
-them before you move on. If they pick the browser path, point them to
-`workshop/browser.md`: they click through it themselves.
-
-## Forks have their own factory
-
-This repository is a starter that everyone forks, so it has no `tessl.json`.
-Each person sets up a factory on their own fork. Setup turns the factory's
-automations on in Tessl and changes nothing in the repository. A fork can
-later get its own `tessl.json`, for example from the workshop's maintenance
-loop track. In a fork, that's expected: the fork's `tessl.json` belongs to the
-fork, not to everyone who forks this repository.
+Carnival Arcade is a small browser carnival. The midway (`index.html`,
+`src/main.ts`, `src/midway/`) is a walkable isometric map with a booth for every
+game; each game lives in its own folder under `src/games/`.
 
 ## Stack
 
@@ -48,16 +31,9 @@ merges. Nobody pushes to `main` directly.
 
 ```txt
 index.html                the midway page
-WORKSHOP.md               the workshop: the schedule, and a choice of two paths
-workshop/
-  agent.md                the agent path: set up from your coding agent
-  browser.md              the browser path: set up in the Tessl app
-docs/midway.jpg           the screenshot at the top of the README
-docs/social-preview.jpg   the 1280x640 image for link previews and GitHub's social preview
-docs/jit-board-queue.md   the design for the workshop's advanced stretch
-tessl-factory/skills/     sample skills for maintenance loops
 src/
   main.ts                 the router (#/play/<game-id>) and the midway's overlay
+  share.ts                the repository link and the share links on the midway
   midway/                 the walkable midway map
     world.ts              layout, movement and pathfinding (plain functions)
     world.test.ts
@@ -75,6 +51,8 @@ src/
       game.ts
       game.test.ts
       README.md
+skills/
+  add-carnival-game/      how to add a new game to the midway
 ```
 
 ## The midway
@@ -123,8 +101,9 @@ You often work on an issue with nobody around to answer questions.
   it: mention it in the pull request so it can get its own issue.
 - **If something is unclear,** pick the simplest reading that keeps the house
   rules, and say which reading you picked in the pull request.
-- **Leave these alone** unless the issue asks for them: `.github/`, `tessl.json`,
-  `.tessl/` and `package-lock.json`.
+- **Leave these alone** unless the issue asks for them: `.github/`,
+  `.devcontainer/`, `tessl.json` and `package-lock.json`. Never commit generated
+  tool setup (`.tessl/`, `.agents/`, `.claude/`, `.codex/`) or credentials.
 - **Don't add dependencies.** `npm ci` has to stay quick, and the cloud machine
   can't install system packages.
 - **Before you finish,** run `npm run format`, then `npm run check`, and make
@@ -135,15 +114,3 @@ You often work on an issue with nobody around to answer questions.
 ## Skills
 
 - `skills/add-carnival-game/SKILL.md`: how to add a new game to the midway.
-- `skills/set-up-your-fork/SKILL.md`: turn on Issues, Actions and GitHub Pages
-  in a fork, lock it down, and deploy the carnival.
-- `skills/check-workshop-ready/SKILL.md`: check a laptop and fork are ready for
-  the workshop. It only checks, and changes nothing without asking.
-- `tessl-factory/skills/`: sample skills for scheduled maintenance loops
-  (rule mining, doc gardening, test health). Each one files issues and never
-  changes code. `tessl-factory/` is a plugin, so a schedule in `tessl.json` runs
-  one as `file:tessl-factory#rule-mining`.
-
-`WORKSHOP.md` starts the workshop this repo was built for, and sends people down
-one of two paths: `workshop/agent.md` or `workshop/browser.md`. Each has a core
-path everyone finishes, then optional tracks.
