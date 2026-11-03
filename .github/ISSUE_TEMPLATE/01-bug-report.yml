@@ -1,0 +1,33 @@
+name: Bug report
+description: Something in Carnival Arcade is broken or behaves differently from what you expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected to see instead.
+      placeholder: After a round of water cannon, my best score on the booth card didn't change.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Where you started, and what you did.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Browser and device
+      placeholder: Firefox 140 on a Windows laptop
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, console errors, or which game or part of the midway it's in.
