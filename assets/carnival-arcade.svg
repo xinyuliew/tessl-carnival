@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="300" viewBox="0 0 1120 300" role="img" aria-labelledby="title desc">
+<title id="title">A little carnival at sunset</title>
+<desc id="desc">Four miniature game booths beneath bunting, with a Ferris wheel and a crescent moon behind them.</desc>
+<defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#241641"/><stop offset=".65" stop-color="#704068"/><stop offset="1" stop-color="#ed9a6a"/></linearGradient>
+<symbol id="booth" viewBox="0 0 180 150">
+<rect x="13" y="40" width="154" height="105" rx="8" fill="#382446"/>
+<path d="M5 42 27 8h126l22 34Z" fill="#f4d9b0"/>
+<path d="m27 8-9 34h27l4-34Zm45 0v34h27l-4-34Zm45 0 9 34h27L139 8Z" fill="currentColor"/>
+<path d="M5 42h170v9c0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0 0 12-17 12-17 0Z" fill="currentColor"/>
+<rect x="27" y="64" width="126" height="52" rx="5" fill="#211b37"/>
+<rect x="9" y="117" width="162" height="10" rx="3" fill="#e6b777"/>
+<path d="M24 128h132v17H24Z" fill="currentColor" opacity=".65"/>
+<path d="M20 145h140" stroke="#f4d9b0" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+</defs>
+<rect width="1120" height="300" rx="20" fill="url(#sky)"/>
+<g fill="#ffe6b7"><circle cx="75" cy="43" r="2"/><circle cx="238" cy="34" r="1.5"/><circle cx="446" cy="36" r="2"/><circle cx="693" cy="23" r="1.5"/><circle cx="926" cy="45" r="2"/><circle cx="1040" cy="94" r="1.5"/>
+<path d="m354 46 2 6 6 2-6 2-2 6-2-6-6-2 6-2Zm425 16 2 6 6 2-6 2-2 6-2-6-6-2 6-2Z"/>
+<path d="M1018 27a25 25 0 1 0 26 34 25 25 0 0 1-26-34Z"/></g>
+<g fill="none" stroke="#f3cfb1" stroke-width="2" opacity=".35">
+<circle cx="128" cy="148" r="55"/><path d="M73 148h110m-55-55v110m-39-94 78 78m0-78-78 78m39-39-41 91m41-91 41 91"/>
+<rect x="120" y="87" width="16" height="13" rx="3"/><rect x="176" y="141" width="16" height="13" rx="3"/><rect x="120" y="197" width="16" height="13" rx="3"/><rect x="64" y="141" width="16" height="13" rx="3"/>
+</g>
+<path d="M0 251q170-35 350-6t390-3 380 7v31a20 20 0 0 1-20 20H20a20 20 0 0 1-20-20Z" fill="#251e34"/>
+<path d="M0 279q280-10 560 0t560 0" fill="none" stroke="#bd8875" opacity=".25" stroke-width="2"/>
+<path d="M30 68q260 57 520 0 260 57 540 0" fill="none" stroke="#f2d9bb" stroke-width="2" opacity=".7"/>
+<g fill="#e7af65"><path d="m64 76 16 3-10 18Zm155 21 16 1-8 18Zm158-6 16-2-6 19Zm165-21 16 2-10 18Zm159 27 16 1-8 18Zm166-2 16-2-6 19Zm164-22 16-3-5 19Z"/></g>
+<use href="#booth" x="225" y="103" width="180" height="150" color="#c86877"/>
+<use href="#booth" x="430" y="103" width="180" height="150" color="#7f9ba1"/>
+<use href="#booth" x="635" y="103" width="180" height="150" color="#bc8968"/>
+<use href="#booth" x="840" y="103" width="180" height="150" color="#9c82bd"/>
+<g fill="none" stroke-linecap="round" stroke-width="3">
+<path d="m295 202 23-21 15 7" stroke="#78c9dc"/><circle cx="342" cy="184" r="10" stroke="#78c9dc"/>
+<ellipse cx="507" cy="180" rx="17" ry="8" stroke="#ffd274"/><path d="M539 184v16h12v-16m-10 0v-8h8v8" stroke="#abd0c4"/>
+<path d="M698 199v-8a12 12 0 0 1 24 0v8Z" stroke="#e8b48f"/>
+<path d="m921 172-8 15h11l-7 16 20-22h-13l7-9" stroke="#ffd274"/>
+</g>
+<g fill="#241b35"><circle cx="705" cy="190" r="2"/><circle cx="715" cy="190" r="2"/></g>
+<g fill="#fff0d8" font-family="Trebuchet MS,Segoe UI,sans-serif" font-size="13" font-weight="700" text-anchor="middle" letter-spacing=".5">
+<text x="315" y="274">WATER CANNON</text><text x="520" y="274">RING TOSS</text><text x="725" y="274">WHACK-A-MOLE</text><text x="930" y="274">BOTTLED THUNDER</text>
+</g>
+</svg>
