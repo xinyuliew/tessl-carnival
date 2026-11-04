@@ -1,36 +1,24 @@
 # Carnival Arcade
 
-**A little workshop project, one booth at a time.**
+A local browser arcade built during the **Build your own software factory with
+context** workshop at **AI Native DevCon NYC**.
 
-![An illustrated miniature carnival at sunset, with four game booths](assets/carnival-arcade.svg)
+I started from [Tessl Carnival](https://github.com/tesslio/tessl-carnival) and
+used coding agents to add three games, a sunset midway, and fixes from code
+review. Water Cannon was included in the starter.
 
-I participated in Tessl's **Build your own software factory with context**
-workshop at **AI Native DevCon NYC**. I started with a carnival starter project
-and used coding agents and an issue-to-PR workflow to turn small ideas into
-playable games.
+## Games
 
-This is what I shipped from that experiment: a tiny arcade you can explore on
-your own computer, with a sunset midway and a few booths to stop at.
+| Booth                                                  | Description                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
+| [Water Cannon](src/games/water-cannon/README.md)       | Shoot moving targets with 15 shots.                         |
+| [Ring Toss](src/games/ring-toss/README.md)             | Throw eight rings onto bottles. Farther rows score more.    |
+| [Whack-a-Mole](src/games/whack-a-mole/README.md)       | Hit moles in a 30-second round as they appear faster.       |
+| [Bottled Thunder](src/games/bottled-thunder/README.md) | Guide sparks into matching bottles with a magnetic lantern. |
 
-## The little things I shipped
+## Run locally
 
-| Booth                                                         | The idea                                                                                                                        |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 🎯 **[Ring Toss](src/games/ring-toss/README.md)**             | Eight rings, a gently swaying aim, and bottles worth more the farther back they stand.                                          |
-| 🔨 **[Whack-a-Mole](src/games/whack-a-mole/README.md)**       | A 30-second dash around nine holes. The moles get faster; every hit earns 10 points.                                            |
-| ⚡ **[Bottled Thunder](src/games/bottled-thunder/README.md)** | A storm in a glass cabinet. Pull living sparks with a magnetic lantern, release them into matching bottles, and build a streak. |
-
-The **[Water Cannon](src/games/water-cannon/README.md)** came with the starter:
-15 shots at moving targets. It was my first game to play and the pattern for
-the new booths.
-
-I also added the **orange-to-purple sunset**, made this a standalone project,
-and worked through review feedback on timing, touch controls, and scoring.
-Each booth has its own logic tests; best scores stay in the browser.
-
-## Try it on your computer
-
-With **Node.js 24** installed:
+Requires Node.js 24.
 
 ```sh
 git clone https://github.com/xinyuliew/tessl-carnival.git
@@ -39,32 +27,12 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed in the terminal, usually **http://localhost:5173**.
-Keep the terminal running while you play.
+Open the URL printed in the terminal. Walk with WASD, arrow keys, or a click.
+Press **E** near a booth to play. Scores are saved in your browser.
 
-**Walk:** WASD, arrow keys, or click a path. **Play:** walk up to a booth and
-press **E**, or use the booth list. **Return:** select **Back to the midway**.
+## Development
 
-This is a local browser app. Your scores belong to that browser and site
-address; hosting and an account are not needed to play.
+TypeScript, Vite, HTML Canvas, and Vitest.
+Run `npm run check` to validate changes and `npm run build` to build the app.
 
-<details>
-<summary><strong>A peek behind the booths</strong></summary>
-
-TypeScript · Vite · HTML Canvas · Vitest. No UI framework.
-
-Each game lives in `src/games/<game-id>/`; the midway discovers it automatically.
-The shared theme, scores, and registry live in `src/carnival/`.
-
-- `npm run check` — lint, formatting, types, and game-logic tests.
-- `npm run build` — make a production build; `npm run preview` serves it locally.
-- [Add a booth](skills/add-carnival-game/SKILL.md) · [Contribute](CONTRIBUTING.md) · [Agent guide](AGENTS.md)
-
-</details>
-
----
-
-A small project by **[xinyuliew](https://github.com/xinyuliew)**.
-Started from **[Tessl Carnival](https://github.com/tesslio/tessl-carnival)**
-during the workshop. Built with coding agents, then tested and refined through
-pull requests. **[MIT licensed](LICENSE)**; original attribution is retained.
+[MIT license](LICENSE). Original starter attribution is retained.
